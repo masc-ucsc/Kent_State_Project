@@ -16,6 +16,7 @@ uint64_t lastUpdate = 0;
 int voltage = 0;
 int dutyCycle = 0;
 int pulseTime = 0;
+int pulseSpacing = 0;
 
 void setup() {
   Serial.begin(BAUD);         // default settings: 8 data bits, no parity, one stop
@@ -30,7 +31,7 @@ void loop() {
       if (c == '\n') {
         inBuffer[ibIndex] = '\0';
         ibIndex = 0;
-        
+
         processCommand();
         
       } else {
@@ -56,6 +57,8 @@ void processCommand() {
     dutyCycle = modified_atoi(&inBuffer[1]);
   else if (inBuffer[0] == 'p')
     pulseTime = modified_atoi(&inBuffer[1]);
+  else if (inBuffer[0] == 's')
+    pulseSpacing = modified_atoi(&inBuffer[1]);
   else if (inBuffer[0] == 'o' && inBuffer[1] == 'n' && inBuffer[2] == 'n')
     state = STATE_ON;
   else if (inBuffer[0] == 'o' && inBuffer[1] == 'f' && inBuffer[2] == 'f')
@@ -82,6 +85,8 @@ void message() {
   Serial.print(dutyCycle);
   Serial.print(";");
   Serial.print(pulseTime);
+  Serial.print(";");
+  Serial.print(pulseSpacing);
   Serial.print("\n");
 }
 

@@ -3,3 +3,8 @@ C:\Users\hskinner-bahay\Documents\Kent_State_Project\Labview\LaserControl\SlugHF
 C:\Users\hskinner-bahay\Documents\Kent_State_Project\Labview\LaserControl\SlugHFVInterface\SlugHFVInterface\obj\Debug\SlugHFVInterface.csprojResolveAssemblyReference.cache
 C:\Users\hskinner-bahay\Documents\Kent_State_Project\Labview\LaserControl\SlugHFVInterface\SlugHFVInterface\obj\Debug\SlugHFVInterface.dll
 C:\Users\hskinner-bahay\Documents\Kent_State_Project\Labview\LaserControl\SlugHFVInterface\SlugHFVInterface\obj\Debug\SlugHFVInterface.pdb
+C:\Users\hskinner-bahay\Documents\GitHub\Kent_State_Project\Labview\LaserControl\SlugHFVInterface\SlugHFVInterface\bin\Debug\SlugHFVInterface.dll
+C:\Users\hskinner-bahay\Documents\GitHub\Kent_State_Project\Labview\LaserControl\SlugHFVInterface\SlugHFVInterface\bin\Debug\SlugHFVInterface.pdb
+C:\Users\hskinner-bahay\Documents\GitHub\Kent_State_Project\Labview\LaserControl\SlugHFVInterface\SlugHFVInterface\obj\Debug\SlugHFVInterface.csprojResolveAssemblyReference.cache
+C:\Users\hskinner-bahay\Documents\GitHub\Kent_State_Project\Labview\LaserControl\SlugHFVInterface\SlugHFVInterface\obj\Debug\SlugHFVInterface.dll
+C:\Users\hskinner-bahay\Documents\GitHub\Kent_State_Project\Labview\LaserControl\SlugHFVInterface\SlugHFVInterface\obj\Debug\SlugHFVInterface.pdb
