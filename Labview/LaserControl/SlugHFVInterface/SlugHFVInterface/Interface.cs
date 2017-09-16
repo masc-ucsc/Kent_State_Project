@@ -10,13 +10,13 @@ namespace SlugHFVInterface
 {
     public class Interface
     {
-        enum OperatingState { STATE_OFF, STATE_POWERING_UP, STATE_ON, };
+        enum OperatingState { STATE_OFF, STATE_POWERING_UP, STATE_ON };
         private OperatingState state = OperatingState.STATE_OFF;
 
         private StringInputBuffer ibuffer = new StringInputBuffer();
 
-        private const string POWER_ON_CMD  = "onn";
-        private const string POWER_OFF_CMD = "off";
+        private const string POWER_ON_CMD  = "onn\n";
+        private const string POWER_OFF_CMD = "off\n";
 
         private const string VOLTAGE_LEVEL_FLAG    = "v";
         private const string DUTY_CYCLE_LEVEL_FLAG = "d";
@@ -101,7 +101,7 @@ namespace SlugHFVInterface
                     break;
                 case OperatingState.STATE_POWERING_UP:
                     if (CheckSettingConsistency(userPower, userDutyCycle, userPulseTime, userPulseSpacing))
-                        cmdQueue.Enqueue(POWER_ON_CMD + "\n");
+                        cmdQueue.Enqueue(POWER_ON_CMD);
 
                     if (receivedSetting.On)
                         state = OperatingState.STATE_ON;
@@ -110,7 +110,7 @@ namespace SlugHFVInterface
 
                 case OperatingState.STATE_ON:
                     if(powerOffFlag)
-                        cmdQueue.Enqueue(POWER_OFF_CMD + "\n");
+                        cmdQueue.Enqueue(POWER_OFF_CMD);
 
                     if (!receivedSetting.On)
                         state = OperatingState.STATE_OFF;
@@ -119,22 +119,22 @@ namespace SlugHFVInterface
             }
 
             if (userPower != userSetting.PowerLevel) {
-                cmdQueue.Enqueue(PowerLevelCmd(userPower) + "\n");
+                cmdQueue.Enqueue(PowerLevelCmd(userPower));
                 userSetting.PowerLevel = userPower;
             }
 
             if (userDutyCycle != userSetting.DutyCycle) {
-                cmdQueue.Enqueue(DutyCycleCmd(userDutyCycle) + "\n");
+                cmdQueue.Enqueue(DutyCycleCmd(userDutyCycle));
                 userSetting.DutyCycle = userDutyCycle;
             }
 
             if (userPulseTime != userSetting.PulseTime) {
-                cmdQueue.Enqueue(PulseTimeCmd(userPulseTime) + "\n");
+                cmdQueue.Enqueue(PulseTimeCmd(userPulseTime));
                 userSetting.PulseTime = userPulseTime;
             }
 
             if (userPulseSpacing != userSetting.PulseSpacing) {
-                cmdQueue.Enqueue(PulseSpacingCmd(userPulseSpacing) + "\n");
+                cmdQueue.Enqueue(PulseSpacingCmd(userPulseSpacing));
                 userSetting.PulseSpacing = userPulseSpacing;
             }
         }
@@ -151,22 +151,22 @@ namespace SlugHFVInterface
 
         private string PowerLevelCmd(int pl)
         {
-            return VOLTAGE_LEVEL_FLAG + pl.ToString();
+            return VOLTAGE_LEVEL_FLAG + pl.ToString() + "\n";
         }
 
         private string DutyCycleCmd(int pl)
         {
-            return DUTY_CYCLE_LEVEL_FLAG + pl.ToString();
+            return DUTY_CYCLE_LEVEL_FLAG + pl.ToString() + "\n";
         }
 
         private string PulseTimeCmd(int pl)
         {
-            return PULSE_TIME_FLAG + pl.ToString();
+            return PULSE_TIME_FLAG + pl.ToString() + "\n";
         }
 
         private string PulseSpacingCmd(int pl)
         {
-            return PULSE_SPACING_FLAG + pl.ToString();
+            return PULSE_SPACING_FLAG + pl.ToString() + "\n";
         }
 
         private bool CheckSettingConsistency(int userPower, int userDutyCycle, int userPulseTime, int userPulseSpacing)
