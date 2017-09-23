@@ -14,6 +14,7 @@ namespace SlugHFVInterface
         public StringInputBuffer(char nlm = '\n')
         {
             newLineMarker = nlm;
+            buffer = "";
         }
 
         public string Update(string chunk)
@@ -22,7 +23,7 @@ namespace SlugHFVInterface
 
             if (buffer.Contains(newLineMarker)) {
                 string[] split = buffer.Split(newLineMarker);
-                buffer = split[1];
+                buffer = (split.Length == 2) ? split[1] : "";
                 return split[0];
             }
             else

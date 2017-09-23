@@ -13,14 +13,16 @@ namespace SlugHFVInterface
         public int PulseTime { get; set; }
         public int PulseSpacing { get; set; }
         public bool On { get; set; }
+        public bool Fault { get; set; }
 
-        public DeviceSetting(int pl, int dc, int pt, int ps, bool on)
+        public DeviceSetting(int pl, int dc, int pt, int ps, bool on, bool fault)
         {
             PowerLevel = pl;
             DutyCycle = dc;
             PulseTime = pt;
             PulseSpacing = ps;
             On = on;
+            Fault = fault;
         }
 
         public DeviceSetting()
@@ -30,6 +32,7 @@ namespace SlugHFVInterface
             PulseTime = 0;
             PulseSpacing = 0;
             On = false;
+            Fault = false;
         }
     }
 }

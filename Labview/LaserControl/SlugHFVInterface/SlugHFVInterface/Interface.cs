@@ -15,8 +15,8 @@ namespace SlugHFVInterface
 
         private StringInputBuffer ibuffer = new StringInputBuffer();
 
-        private const string POWER_ON_CMD  = "onn\n";
-        private const string POWER_OFF_CMD = "off\n";
+        private const string POWER_ON_CMD  = "onn";
+        private const string POWER_OFF_CMD = "off";
 
         private const string VOLTAGE_LEVEL_FLAG    = "v";
         private const string DUTY_CYCLE_LEVEL_FLAG = "d";
@@ -59,36 +59,51 @@ namespace SlugHFVInterface
                 return;
 
             string[] chunks = trimmed.Split(';');
+            bool error = false;
+
+            DeviceSetting settingBuffer = new DeviceSetting();
 
             if (chunks[0] == POWER_ON_CMD) {
-                receivedSetting.On = true;
+                settingBuffer.On = true;
             } else if (chunks[0] == POWER_OFF_CMD) {
-                receivedSetting.On = false;
+                settingBuffer.On = false;
             } else {
-                fault = true;
+                error = true;
             }
 
             int receivedPowerLevel, receivedDutyCycle, receivedPulseTime, receivedPulseSpacing;
 
             if (int.TryParse(chunks[1], out receivedPowerLevel))
-                receivedSetting.PowerLevel = receivedPowerLevel;
+                settingBuffer.PowerLevel = receivedPowerLevel;
             else
-                fault = true;
+                error = true;
 
-            if (int.TryParse(chunks[2], out receivedDutyCycle))
-                receivedSetting.DutyCycle = receivedDutyCycle;
+            if (int.TryParse(chunks[2], out receivedDutyCycle)) {
+                if (receivedDutyCycle < 0 || receivedDutyCycle > 100)
+                    receivedDutyCycle = 0;
+
+                receivedDutyCycle = 256 * receivedDutyCycle / 100;      // cast to range of [0, 100]
+                settingBuffer.DutyCycle = receivedDutyCycle;
+            }
             else
-                fault = true;
+                error = true;
 
             if (int.TryParse(chunks[3], out receivedPulseTime))
-                receivedSetting.PulseTime = receivedPulseTime;
+                settingBuffer.PulseTime = receivedPulseTime;
             else
-                fault = true;
+                error = true;
 
             if (int.TryParse(chunks[4], out receivedPulseSpacing))
-                receivedSetting.PulseSpacing = receivedPulseSpacing;
+                settingBuffer.PulseSpacing = receivedPulseSpacing;
             else
+                error = true;
+
+            if (error)
                 fault = true;
+            else {
+                receivedSetting = settingBuffer;
+                fault = false;
+            }
         }
 
         private void UpdateUserSetting(bool powerOnFlag, bool powerOffFlag, int userPower, int userDutyCycle, int userPulseTime, int userPulseSpacing)

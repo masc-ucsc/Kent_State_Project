@@ -59,7 +59,7 @@ void loop() {
   if (state == STATE_ON)
     updateOutput(currentTime);
   else
-    digitalWrite(VOUT_PIN, LOW);
+    outputOff();
 }
 
 void updateOutput(uint64_t currentTime) {
