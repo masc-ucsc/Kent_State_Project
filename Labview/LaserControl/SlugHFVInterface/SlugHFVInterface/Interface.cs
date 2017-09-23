@@ -15,8 +15,8 @@ namespace SlugHFVInterface
 
         private StringInputBuffer ibuffer = new StringInputBuffer();
 
-        private const string POWER_ON_CMD  = "onn";
-        private const string POWER_OFF_CMD = "off";
+        public const string POWER_ON_CMD  = "onn";
+        public const string POWER_OFF_CMD = "off";
 
         private const string VOLTAGE_LEVEL_FLAG    = "v";
         private const string DUTY_CYCLE_LEVEL_FLAG = "d";
@@ -41,9 +41,9 @@ namespace SlugHFVInterface
             string resp = ibuffer.Update(serialIn);
 
             if (resp != null)
-                ProcessResponse(resp);
+                receivedSetting = new DeviceSetting(resp);
 
-            UpdateUserSetting(powerOnFlag, powerOffFlag, power, dutyCycle, pulseTime, pulseSpacing);
+            UpdateUserSetting(powerOnFlag, powerOffFlag, new UserSetting(power, dutyCycle, pulseTime, pulseSpacing));
             indicatorLight = UpdateIndicatorLight();
         }
 
@@ -52,61 +52,7 @@ namespace SlugHFVInterface
             cmdQueue.Dequeue();
         }
 
-        private void ProcessResponse(string resp)            // update received power / duty cycle / pulse time
-        {
-            string trimmed = resp.Trim();
-            if (trimmed.Length == 0)
-                return;
-
-            string[] chunks = trimmed.Split(';');
-            bool error = false;
-
-            DeviceSetting settingBuffer = new DeviceSetting();
-
-            if (chunks[0] == POWER_ON_CMD) {
-                settingBuffer.On = true;
-            } else if (chunks[0] == POWER_OFF_CMD) {
-                settingBuffer.On = false;
-            } else {
-                error = true;
-            }
-
-            int receivedPowerLevel, receivedDutyCycle, receivedPulseTime, receivedPulseSpacing;
-
-            if (int.TryParse(chunks[1], out receivedPowerLevel))
-                settingBuffer.PowerLevel = receivedPowerLevel;
-            else
-                error = true;
-
-            if (int.TryParse(chunks[2], out receivedDutyCycle)) {
-                if (receivedDutyCycle < 0 || receivedDutyCycle > 100)
-                    receivedDutyCycle = 0;
-
-                receivedDutyCycle = 256 * receivedDutyCycle / 100;      // cast to range of [0, 100]
-                settingBuffer.DutyCycle = receivedDutyCycle;
-            }
-            else
-                error = true;
-
-            if (int.TryParse(chunks[3], out receivedPulseTime))
-                settingBuffer.PulseTime = receivedPulseTime;
-            else
-                error = true;
-
-            if (int.TryParse(chunks[4], out receivedPulseSpacing))
-                settingBuffer.PulseSpacing = receivedPulseSpacing;
-            else
-                error = true;
-
-            if (error)
-                fault = true;
-            else {
-                receivedSetting = settingBuffer;
-                fault = false;
-            }
-        }
-
-        private void UpdateUserSetting(bool powerOnFlag, bool powerOffFlag, int userPower, int userDutyCycle, int userPulseTime, int userPulseSpacing)
+        private void UpdateUserSetting(bool powerOnFlag, bool powerOffFlag, UserSetting newSetting)
         {
             switch (state) {
                 case OperatingState.STATE_OFF:
@@ -115,7 +61,7 @@ namespace SlugHFVInterface
 
                     break;
                 case OperatingState.STATE_POWERING_UP:
-                    if (CheckSettingConsistency(userPower, userDutyCycle, userPulseTime, userPulseSpacing))
+                    if (CheckSettingConsistency(newSetting))
                         cmdQueue.Enqueue(POWER_ON_CMD);
 
                     if (receivedSetting.On)
@@ -133,24 +79,24 @@ namespace SlugHFVInterface
                     break;
             }
 
-            if (userPower != userSetting.PowerLevel) {
-                cmdQueue.Enqueue(PowerLevelCmd(userPower));
-                userSetting.PowerLevel = userPower;
+            if (newSetting.PowerLevel != userSetting.PowerLevel) {
+                cmdQueue.Enqueue(PowerLevelCmd(newSetting.PowerLevel));
+                userSetting.PowerLevel = newSetting.PowerLevel;
             }
 
-            if (userDutyCycle != userSetting.DutyCycle) {
-                cmdQueue.Enqueue(DutyCycleCmd(userDutyCycle));
-                userSetting.DutyCycle = userDutyCycle;
+            if (newSetting.DutyCycle != userSetting.DutyCycle) {
+                cmdQueue.Enqueue(DutyCycleCmd(newSetting.DutyCycle));
+                userSetting.DutyCycle = newSetting.DutyCycle;
             }
 
-            if (userPulseTime != userSetting.PulseTime) {
-                cmdQueue.Enqueue(PulseTimeCmd(userPulseTime));
-                userSetting.PulseTime = userPulseTime;
+            if (newSetting.PulseTime != userSetting.PulseTime) {
+                cmdQueue.Enqueue(PulseTimeCmd(newSetting.PulseTime));
+                userSetting.PulseTime = newSetting.PulseTime;
             }
 
-            if (userPulseSpacing != userSetting.PulseSpacing) {
-                cmdQueue.Enqueue(PulseSpacingCmd(userPulseSpacing));
-                userSetting.PulseSpacing = userPulseSpacing;
+            if (newSetting.PulseSpacing != userSetting.PulseSpacing) {
+                cmdQueue.Enqueue(PulseSpacingCmd(newSetting.PulseSpacing));
+                userSetting.PulseSpacing = newSetting.PulseSpacing;
             }
         }
 
@@ -184,10 +130,10 @@ namespace SlugHFVInterface
             return PULSE_SPACING_FLAG + pl.ToString() + "\n";
         }
 
-        private bool CheckSettingConsistency(int userPower, int userDutyCycle, int userPulseTime, int userPulseSpacing)
+        private bool CheckSettingConsistency(UserSetting other)
         {
-            return receivedSetting.PowerLevel == userPower && receivedSetting.DutyCycle == userDutyCycle &&
-                receivedSetting.PulseTime == userPulseTime && receivedSetting.PulseSpacing == userPulseSpacing;
+            return receivedSetting.PowerLevel == other.PowerLevel && receivedSetting.DutyCycle == other.DutyCycle &&
+                receivedSetting.PulseTime == other.PulseTime && receivedSetting.PulseSpacing == other.PulseSpacing;
         }
 
         public string OutMessage => cmdQueue.First();
