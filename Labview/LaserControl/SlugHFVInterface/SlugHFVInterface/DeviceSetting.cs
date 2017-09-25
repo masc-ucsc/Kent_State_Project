@@ -24,15 +24,12 @@ namespace SlugHFVInterface
 
             DeviceSetting settingBuffer = new DeviceSetting();
 
-            if (chunks[0] == Interface.POWER_ON_CMD) {
+            if (chunks[0] == Interface.POWER_ON_CMD)
                 settingBuffer.On = true;
-            }
-            else if (chunks[0] == Interface.POWER_OFF_CMD) {
+            else if (chunks[0] == Interface.POWER_OFF_CMD)
                 settingBuffer.On = false;
-            }
-            else {
+            else
                 error = true;
-            }
 
             int receivedPowerLevel, receivedDutyCycle, receivedPulseTime, receivedPulseSpacing;
 
