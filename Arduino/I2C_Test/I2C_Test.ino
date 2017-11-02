@@ -15,8 +15,9 @@ void loop() {
 
 void receiveEvent(int howMany) {
   while (Wire.available() > 1) {
-    char c = Wire.read();
+    int c = Wire.read();
     Serial.print(c);
+    Serial.print(' ');
   }
 
   int x = Wire.read();

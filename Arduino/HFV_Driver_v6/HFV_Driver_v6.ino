@@ -1,10 +1,12 @@
 #include "Wire.h"
 
+//#define DISABLE_I2C
+
 #define POT_ADDR      0x2f
 #define BAUD 9600
 #define VOUT_PIN      5
 
-#define BUFFER_SIZE 16
+#define BUFFER_SIZE 256
 char inBuffer[BUFFER_SIZE];
 int ibIndex = 0;
 
@@ -33,7 +35,10 @@ void setup() {
   while (!Serial);
   pinMode(VOUT_PIN, OUTPUT);
   digitalWrite(VOUT_PIN, LOW);
-  Wire.begin();
+
+#ifndef DISABLE_I2C
+  Wire.begin();               // I2C
+#endif
 }
 
 void loop() {
@@ -51,15 +56,16 @@ void loop() {
         
       } else {
         if (ibIndex >= BUFFER_SIZE)
-          state = STATE_FAULT;
+          ibIndex = 0;
         else
           inBuffer[ibIndex++] = (char) c;
       }
     }
   }
 
-  if (state == STATE_ON && currentTime - lastUpdate >= UPDATE_INTERVAL) {
-    updateOutput(currentTime);
+  if (currentTime - lastUpdate >= UPDATE_INTERVAL) {
+    if (state == STATE_ON)
+      updateOutput(currentTime);
     message();
     lastUpdate = currentTime;
   }
@@ -83,10 +89,13 @@ void updateOutput(uint64_t currentTime) {
   if (voltageChanged) {
     if (voltage > 127 || voltage < 0)
       voltage = 0;
-      
+
+#ifndef DISABLE_I2C
     Wire.beginTransmission(POT_ADDR);
     Wire.write(voltage);
     Wire.endTransmission();
+#endif
+
     voltageChanged = false;
   }
 

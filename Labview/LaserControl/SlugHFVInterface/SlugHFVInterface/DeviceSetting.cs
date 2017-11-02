@@ -42,7 +42,7 @@ namespace SlugHFVInterface
                 if (receivedDutyCycle < 0 || receivedDutyCycle > 100)
                     receivedDutyCycle = 0;
 
-                receivedDutyCycle = 256 * receivedDutyCycle / 100;      // cast to range of [0, 100]
+                //receivedDutyCycle = 256 * receivedDutyCycle / 100;      // cast to range of [0, 100]
                 DutyCycle = receivedDutyCycle;
             }
             else

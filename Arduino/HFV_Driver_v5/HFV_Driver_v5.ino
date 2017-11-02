@@ -1,7 +1,7 @@
 #define BAUD 9600
 #define VOUT_PIN      5
 
-#define BUFFER_SIZE 16
+#define BUFFER_SIZE 256
 char inBuffer[BUFFER_SIZE];
 int ibIndex = 0;
 
@@ -44,7 +44,7 @@ void loop() {
         
       } else {
         if (ibIndex >= BUFFER_SIZE)
-          state = STATE_FAULT;
+          ibIndex = 0;
         else
           inBuffer[ibIndex++] = (char) c;
       }
