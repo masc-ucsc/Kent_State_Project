@@ -138,6 +138,7 @@ namespace SlugHFVInterface
 
         public string OutMessage => cmdQueue.First();
         public bool HasOutMessage => cmdQueue.Count() > 0;
+        public int MessageCount => cmdQueue.Count();
 
         public int Power => receivedSetting.PowerLevel;
         public int DutyCycle => receivedSetting.DutyCycle;
