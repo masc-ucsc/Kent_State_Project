@@ -8,6 +8,7 @@ package ir_player;
 import com.github.sarxos.webcam.Webcam;
 import java.awt.image.BufferedImage;
 
+import java.awt.Rectangle;
 import javax.swing.Timer;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -22,6 +23,11 @@ import java.awt.Color;
  */
 public class MainFrame extends javax.swing.JFrame {
 
+    public static final int INITIAL_X = 20;
+    public static final int INITIAL_Y = 20;
+    public static final int INITIAL_WIDTH = 100;
+    public static final int INITIAL_HEIGHT = 100;
+    
     public MainFrame() {
         initComponents();
         initCamera();
@@ -36,12 +42,30 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel4 = new javax.swing.JLabel();
         streamButton = new javax.swing.JToggleButton();
         exitButton = new javax.swing.JButton();
         outputBox = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         frameRateBox = new javax.swing.JTextField();
         imagePanel = new ir_player.CameraFeedPanel();
+        fbYPos = new javax.swing.JTextField();
+        fbXPos = new javax.swing.JTextField();
+        bbPosLeft = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        fbWidth = new javax.swing.JTextField();
+        fbHeight = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        bbPosRight = new javax.swing.JButton();
+        bbPosUp = new javax.swing.JButton();
+        bbPosDown = new javax.swing.JButton();
+        bbWidthUp = new javax.swing.JButton();
+        bbWidthDown = new javax.swing.JButton();
+        bbHeightUp = new javax.swing.JButton();
+        bbHeightDown = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+
+        jLabel4.setText("Width");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -84,35 +108,170 @@ public class MainFrame extends javax.swing.JFrame {
             .addGap(0, 480, Short.MAX_VALUE)
         );
 
+        fbYPos.setText(String.valueOf(MainFrame.INITIAL_Y));
+
+        fbXPos.setText(String.valueOf(MainFrame.INITIAL_X));
+
+        bbPosLeft.setText("<");
+        bbPosLeft.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bbPosLeftActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("X,Y");
+
+        fbWidth.setText(String.valueOf(MainFrame.INITIAL_WIDTH));
+
+        fbHeight.setText(String.valueOf(MainFrame.INITIAL_HEIGHT));
+
+        jLabel3.setText("Width");
+
+        bbPosRight.setText(">");
+        bbPosRight.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bbPosRightActionPerformed(evt);
+            }
+        });
+
+        bbPosUp.setText("^");
+        bbPosUp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bbPosUpActionPerformed(evt);
+            }
+        });
+
+        bbPosDown.setText("v");
+        bbPosDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bbPosDownActionPerformed(evt);
+            }
+        });
+
+        bbWidthUp.setText("^");
+        bbWidthUp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bbWidthUpActionPerformed(evt);
+            }
+        });
+
+        bbWidthDown.setText("v");
+        bbWidthDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bbWidthDownActionPerformed(evt);
+            }
+        });
+
+        bbHeightUp.setText("^");
+        bbHeightUp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bbHeightUpActionPerformed(evt);
+            }
+        });
+
+        bbHeightDown.setText("v");
+        bbHeightDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bbHeightDownActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Height");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(outputBox, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(streamButton, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(exitButton)
-                .addGap(23, 23, 23))
             .addGroup(layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(frameRateBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(imagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(outputBox, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(imagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(streamButton, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(exitButton))
+                    .addComponent(jLabel2)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(bbPosLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(bbPosDown, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bbPosUp, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bbPosRight, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fbXPos, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(3, 3, 3)
+                        .addComponent(fbYPos, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(bbWidthDown, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(bbWidthUp, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fbWidth, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel3))
+                        .addGap(11, 11, 11)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(bbHeightUp, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(bbHeightDown, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fbHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(imagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(imagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(133, 133, 133)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(bbPosLeft, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(bbPosUp, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(bbPosDown, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(bbPosRight, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(fbXPos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(fbYPos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(bbWidthUp, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(fbWidth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bbWidthDown, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(bbHeightUp, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(fbHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bbHeightDown, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(53, 53, 53)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(streamButton)
                     .addComponent(exitButton)
@@ -135,6 +294,38 @@ public class MainFrame extends javax.swing.JFrame {
     private void streamButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_streamButtonActionPerformed
         streaming = !streaming;
     }//GEN-LAST:event_streamButtonActionPerformed
+
+    private void bbPosLeftActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bbPosLeftActionPerformed
+        imagePanel.decFBoxX();
+    }//GEN-LAST:event_bbPosLeftActionPerformed
+
+    private void bbPosUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bbPosUpActionPerformed
+        imagePanel.decFBoxY();
+    }//GEN-LAST:event_bbPosUpActionPerformed
+
+    private void bbPosDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bbPosDownActionPerformed
+        imagePanel.incFBoxY();
+    }//GEN-LAST:event_bbPosDownActionPerformed
+
+    private void bbPosRightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bbPosRightActionPerformed
+        imagePanel.incFBoxX();
+    }//GEN-LAST:event_bbPosRightActionPerformed
+
+    private void bbWidthUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bbWidthUpActionPerformed
+        imagePanel.incFBoxWidth();
+    }//GEN-LAST:event_bbWidthUpActionPerformed
+
+    private void bbWidthDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bbWidthDownActionPerformed
+        imagePanel.decFBoxWidth();
+    }//GEN-LAST:event_bbWidthDownActionPerformed
+
+    private void bbHeightDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bbHeightDownActionPerformed
+        imagePanel.decFBoxHeight();
+    }//GEN-LAST:event_bbHeightDownActionPerformed
+
+    private void bbHeightUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bbHeightUpActionPerformed
+        imagePanel.incFBoxHeight();
+    }//GEN-LAST:event_bbHeightUpActionPerformed
 
     private static final int IMAGE_UPDATE_TIME = 100;
     private static final int ONE_SECOND        = 1000;
@@ -159,6 +350,13 @@ public class MainFrame extends javax.swing.JFrame {
             BufferedImage img = webcam.getImage();
             imagePanel.updateImage(img);
             imagePanel.repaint();
+            
+            Rectangle fboxPos = imagePanel.getFocusBox();
+            fbXPos.setText(String.valueOf(fboxPos.x));
+            fbYPos.setText(String.valueOf(fboxPos.y));
+            fbWidth.setText(String.valueOf(fboxPos.width));
+            fbHeight.setText(String.valueOf(fboxPos.height));
+            
             ++frameCtr;
         }
     }
@@ -225,10 +423,26 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bbHeightDown;
+    private javax.swing.JButton bbHeightUp;
+    private javax.swing.JButton bbPosDown;
+    private javax.swing.JButton bbPosLeft;
+    private javax.swing.JButton bbPosRight;
+    private javax.swing.JButton bbPosUp;
+    private javax.swing.JButton bbWidthDown;
+    private javax.swing.JButton bbWidthUp;
     private javax.swing.JButton exitButton;
+    private javax.swing.JTextField fbHeight;
+    private javax.swing.JTextField fbWidth;
+    private javax.swing.JTextField fbXPos;
+    private javax.swing.JTextField fbYPos;
     private javax.swing.JTextField frameRateBox;
     private ir_player.CameraFeedPanel imagePanel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JTextField outputBox;
     private javax.swing.JToggleButton streamButton;
     // End of variables declaration//GEN-END:variables

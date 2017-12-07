@@ -20,14 +20,13 @@ public class CameraFeedPanel extends javax.swing.JPanel {
     private Rectangle focusBox = null;
     
     private static final Color RECT_COLOR = Color.RED;
-    private static final int INITIAL_X = 20;
-    private static final int INITIAL_Y = 20;
-    private static final int INITIAL_WIDTH = 100;
-    private static final int INITIAL_HEIGHT = 100;
+    private static final int FBOX_TICK = 3;
+    
     
     public CameraFeedPanel() {
         super();
-        focusBox = new Rectangle(INITIAL_X, INITIAL_Y, INITIAL_WIDTH, INITIAL_HEIGHT);
+        focusBox = new Rectangle(MainFrame.INITIAL_X,
+                MainFrame.INITIAL_Y, MainFrame.INITIAL_WIDTH, MainFrame.INITIAL_HEIGHT);
     }
     
     public void updateImage(BufferedImage nimg) { image = nimg; }
@@ -37,9 +36,25 @@ public class CameraFeedPanel extends javax.swing.JPanel {
         
         if (image != null) {
             g.drawImage(image, 0, 0, null);
+            g.setColor(RECT_COLOR);
+            g.drawRect(focusBox.x, focusBox.y, focusBox.width, focusBox.height);
         }
-        
-        g.setColor(RECT_COLOR);
-        g.drawRect(focusBox.x, focusBox.y, focusBox.width, focusBox.height);
     }
+    
+    public void incFBoxX() { focusBox.x += FBOX_TICK; }
+    public void incFBoxY() { focusBox.y += FBOX_TICK; }
+    public void incFBoxWidth() { focusBox.width += FBOX_TICK; }
+    public void incFBoxHeight() { focusBox.height += FBOX_TICK; }
+    
+    public void decFBoxX() { focusBox.x -= FBOX_TICK; }
+    public void decFBoxY() { focusBox.y -= FBOX_TICK; }
+    public void decFBoxWidth() { focusBox.width -= FBOX_TICK; }
+    public void decFBoxHeight() { focusBox.height -= FBOX_TICK; }
+    
+    public void setFBoxX(int v) { focusBox.x = v; }
+    public void setFBoxY(int v) { focusBox.y = v; }
+    public void setFBoxWidth(int v) { focusBox.width = v; }
+    public void setFBoxHeight(int v) { focusBox.height = v; }
+    
+    public Rectangle getFocusBox() { return focusBox; }
 }
