@@ -138,7 +138,6 @@ public class MainFrame extends javax.swing.JFrame {
 
     private static final int IMAGE_UPDATE_TIME = 100;
     private static final int ONE_SECOND        = 1000;
-    private static final Color RECT_COLOR      = Color.RED;
     
     private boolean streaming = false;
     private int frameCtr = 0;
@@ -158,10 +157,8 @@ public class MainFrame extends javax.swing.JFrame {
     private synchronized void updateIfStreaming() {
         if (streaming) {
             BufferedImage img = webcam.getImage();
-            Graphics g = imagePanel.getGraphics();
-            g.setColor(RECT_COLOR);
-            g.drawImage(img, 0, 0, null);
-            g.drawRect(20, 20, 100, 100);
+            imagePanel.updateImage(img);
+            imagePanel.repaint();
             ++frameCtr;
         }
     }
