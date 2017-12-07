@@ -13,6 +13,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Graphics;
 import java.util.List;
+import java.awt.EventQueue;
+import java.awt.Color;
 
 /**
  *
@@ -34,26 +36,14 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        imagePanel = new javax.swing.JPanel();
         streamButton = new javax.swing.JToggleButton();
         exitButton = new javax.swing.JButton();
         outputBox = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        frameRateBox = new javax.swing.JTextField();
+        imagePanel = new ir_player.CameraFeedPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        imagePanel.setForeground(new java.awt.Color(232, 232, 231));
-        imagePanel.setToolTipText("");
-
-        javax.swing.GroupLayout imagePanelLayout = new javax.swing.GroupLayout(imagePanel);
-        imagePanel.setLayout(imagePanelLayout);
-        imagePanelLayout.setHorizontalGroup(
-            imagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 740, Short.MAX_VALUE)
-        );
-        imagePanelLayout.setVerticalGroup(
-            imagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 356, Short.MAX_VALUE)
-        );
 
         streamButton.setText("Stream");
         streamButton.addActionListener(new java.awt.event.ActionListener() {
@@ -74,35 +64,64 @@ public class MainFrame extends javax.swing.JFrame {
         outputBox.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         outputBox.setText("IR Player");
 
+        jLabel1.setText("Frame Rate");
+
+        frameRateBox.setEditable(false);
+        frameRateBox.setText("<NaN>");
+
+        imagePanel.setMaximumSize(new java.awt.Dimension(640, 480));
+        imagePanel.setMinimumSize(new java.awt.Dimension(640, 480));
+        imagePanel.setPreferredSize(new java.awt.Dimension(640, 480));
+
+        javax.swing.GroupLayout imagePanelLayout = new javax.swing.GroupLayout(imagePanel);
+        imagePanel.setLayout(imagePanelLayout);
+        imagePanelLayout.setHorizontalGroup(
+            imagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 640, Short.MAX_VALUE)
+        );
+        imagePanelLayout.setVerticalGroup(
+            imagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 480, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(imagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(93, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(outputBox, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(streamButton, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(exitButton)
-                        .addGap(23, 23, 23))))
+                .addComponent(outputBox, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(streamButton, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(exitButton)
+                .addGap(23, 23, 23))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(frameRateBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(imagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(imagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(streamButton)
                     .addComponent(exitButton)
                     .addComponent(outputBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(frameRateBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -117,9 +136,12 @@ public class MainFrame extends javax.swing.JFrame {
         streaming = !streaming;
     }//GEN-LAST:event_streamButtonActionPerformed
 
-    private static final int IMAGE_UPDATE = 100;
+    private static final int IMAGE_UPDATE_TIME = 100;
+    private static final int ONE_SECOND        = 1000;
+    private static final Color RECT_COLOR      = Color.RED;
     
     private boolean streaming = false;
+    private int frameCtr = 0;
     private Webcam webcam;
     
     private void initCamera() {
@@ -130,15 +152,29 @@ public class MainFrame extends javax.swing.JFrame {
             webcam.open();
         }
         else
-            outputBox.setText("Could not find camera.");
+            outputBox.setText("ERROR: Could not find camera");
     }
     
-    private void updateIfStreaming() {
+    private synchronized void updateIfStreaming() {
         if (streaming) {
             BufferedImage img = webcam.getImage();
             Graphics g = imagePanel.getGraphics();
+            g.setColor(RECT_COLOR);
             g.drawImage(img, 0, 0, null);
+            g.drawRect(20, 20, 100, 100);
+            ++frameCtr;
         }
+    }
+    
+    private synchronized int retrieveClearFrameCtr() {
+        int val = frameCtr;
+        frameCtr = 0;
+        return val;
+    }
+    
+    private synchronized void updateFrameRate() {
+        int frameCtr = retrieveClearFrameCtr();
+        frameRateBox.setText(""+frameCtr);
     }
     
     /**
@@ -171,22 +207,31 @@ public class MainFrame extends javax.swing.JFrame {
         MainFrame mframe = new MainFrame();
         
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(new Runnable() {
             public void run() {
                 mframe.setVisible(true);
             }
         });
         
-        new Timer(IMAGE_UPDATE, new ActionListener() {
-            public void actionPerformed(ActionEvent ev) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
                 mframe.updateIfStreaming();
+                EventQueue.invokeLater(this);
+            }
+        });
+        
+        new Timer(ONE_SECOND, new ActionListener() {
+            public void actionPerformed(ActionEvent ev) {
+                mframe.updateFrameRate();
             }
         }).start();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton exitButton;
-    private javax.swing.JPanel imagePanel;
+    private javax.swing.JTextField frameRateBox;
+    private ir_player.CameraFeedPanel imagePanel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField outputBox;
     private javax.swing.JToggleButton streamButton;
     // End of variables declaration//GEN-END:variables
