@@ -29,7 +29,7 @@ public class SerialComm implements SerialPortEventListener {
   
   private LinkedList<String> lines = new LinkedList<>();
 
-  public void initialize(String portName) {
+  public boolean initialize(String portName) {
     System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
 
     CommPortIdentifier portId = null;
@@ -46,7 +46,7 @@ public class SerialComm implements SerialPortEventListener {
 
     if (portId == null) {
       System.out.println("Could not find COM port.");
-      return;
+      return false;
     }
 
     try {
@@ -67,9 +67,12 @@ public class SerialComm implements SerialPortEventListener {
       // add event listeners
       serialPort.addEventListener(this);
       serialPort.notifyOnDataAvailable(true);
+      
+      return true;
 
     } catch (Exception e) {
       System.err.println(e.toString());
+      return false;
     }
   }
 

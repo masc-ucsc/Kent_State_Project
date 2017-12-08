@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 import java.awt.Color;
+import java.awt.EventQueue;
+import java.awt.event.ItemEvent;
 
 /**
  *
@@ -16,17 +18,39 @@ import java.awt.Color;
  */
 public class HFVController extends javax.swing.JFrame {
 
-    /**
-     * Creates new form NewJFrame
-     */
+    private static final Color CONNECTED_COLOR = Color.GREEN;
+    private static final Color NOT_CONNECTED_COLOR = Color.RED;
+    private static final Color SYNC_COLOR = Color.BLUE;
+    private static final Color NOT_SYNC_COLOR = Color.DARK_GRAY;
+    private static final Color POWER_ON_COLOR = Color.YELLOW;
+    private static final Color INACTIVE_COLOR = Color.GRAY;
+    
+    public static final int SERIAL_PING_DELAY = 500;
+    public static final int PINGS_UNTIL_DISCONNECT = 4;
+    private int emptyPingCounter = 0;
+    
+    private SerialComm serial;
+    private boolean serialSynced = false;
+    
+    public enum MainPanelState { NOT_CONNECTED, CONNECTED, SYNCED, POWER_ON };
+    private MainPanelState state = MainPanelState.NOT_CONNECTED;
+    
     public HFVController() {
         initComponents();
         serial = new SerialComm();
+        
         syncIndicator.setOpaque(true);
+        sgInterfaceConnectedLight.setOpaque(true);
+        cameraConnectedLight.setOpaque(true);
     }
     
     public void initializeSerial(String portName) {
-        serial.initialize(portName);
+        serialSynced = serial.initialize(portName);
+        
+        if (serialSynced)
+            updateState(MainPanelState.CONNECTED);
+        else
+            updateState(MainPanelState.NOT_CONNECTED);
     }
 
     /**
@@ -38,14 +62,7 @@ public class HFVController extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        powerBar = new javax.swing.JProgressBar();
-        dutyCycleBar = new javax.swing.JProgressBar();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextPane2 = new javax.swing.JTextPane();
         syncButton = new javax.swing.JButton();
-        powerOnButton = new javax.swing.JToggleButton();
         jPanel1 = new javax.swing.JPanel();
         powerSlide = new javax.swing.JSlider();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -63,27 +80,39 @@ public class HFVController extends javax.swing.JFrame {
         jTextPane7 = new javax.swing.JTextPane();
         controllerSerialIn = new javax.swing.JTextField();
         syncIndicator = new javax.swing.JLabel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextPane1 = new javax.swing.JTextPane();
+        powerBar = new javax.swing.JProgressBar();
+        dutyCycleBar = new javax.swing.JProgressBar();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextPane2 = new javax.swing.JTextPane();
         jScrollPane8 = new javax.swing.JScrollPane();
         jTextPane8 = new javax.swing.JTextPane();
         jScrollPane9 = new javax.swing.JScrollPane();
         jTextPane9 = new javax.swing.JTextPane();
-        pulseTimeIndicator = new javax.swing.JTextField();
         pulseSpacingIndicator = new javax.swing.JTextField();
+        pulseTimeIndicator = new javax.swing.JTextField();
+        connectedIndicatorLabel = new javax.swing.JLabel();
+        syncedIndicatorLabel = new javax.swing.JLabel();
+        powerOnIndicatorLabel = new javax.swing.JLabel();
+        cameraConnectedIndicatorLight = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        sgInterfacePort = new javax.swing.JTextField();
+        sgInterfaceConnectButton = new javax.swing.JButton();
+        sgInterfaceConnectedLight = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        cameraFeedPanel = new hfvcontroller.CameraFeedPanel();
+        cameraConnectButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        cameraConnectedLight = new javax.swing.JLabel();
+        irStreamButton = new javax.swing.JToggleButton();
+        powerOnButton = new javax.swing.JButton();
+        powerOffButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        powerBar.setMaximum(10);
-        powerBar.setOrientation(1);
-
-        dutyCycleBar.setOrientation(1);
-
-        jTextPane1.setEditable(false);
-        jTextPane1.setText("Power");
-        jScrollPane1.setViewportView(jTextPane1);
-
-        jTextPane2.setEditable(false);
-        jTextPane2.setText("Duty Cycle");
-        jScrollPane2.setViewportView(jTextPane2);
 
         syncButton.setText("Sync");
         syncButton.addActionListener(new java.awt.event.ActionListener() {
@@ -92,22 +121,15 @@ public class HFVController extends javax.swing.JFrame {
             }
         });
 
-        powerOnButton.setText("Power On");
-        powerOnButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                powerOnButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         powerSlide.setMaximum(10);
@@ -146,6 +168,21 @@ public class HFVController extends javax.swing.JFrame {
         syncIndicator.setText("  ");
         syncIndicator.setToolTipText("");
 
+        jTabbedPane1.setPreferredSize(new java.awt.Dimension(1495, 545));
+
+        jTextPane1.setEditable(false);
+        jTextPane1.setText("Power");
+        jScrollPane1.setViewportView(jTextPane1);
+
+        powerBar.setMaximum(10);
+        powerBar.setOrientation(1);
+
+        dutyCycleBar.setOrientation(1);
+
+        jTextPane2.setEditable(false);
+        jTextPane2.setText("Duty Cycle");
+        jScrollPane2.setViewportView(jTextPane2);
+
         jTextPane8.setEditable(false);
         jTextPane8.setText("Pulse Time");
         jTextPane8.setToolTipText("");
@@ -156,28 +193,242 @@ public class HFVController extends javax.swing.JFrame {
         jTextPane9.setToolTipText("");
         jScrollPane9.setViewportView(jTextPane9);
 
+        pulseSpacingIndicator.setEditable(false);
+
         pulseTimeIndicator.setEditable(false);
         pulseTimeIndicator.setToolTipText("");
 
-        pulseSpacingIndicator.setEditable(false);
+        connectedIndicatorLabel.setFont(new java.awt.Font("Noto Sans", 0, 18)); // NOI18N
+        connectedIndicatorLabel.setForeground(java.awt.Color.gray);
+        connectedIndicatorLabel.setText("Connected");
+
+        syncedIndicatorLabel.setFont(new java.awt.Font("Noto Sans", 0, 18)); // NOI18N
+        syncedIndicatorLabel.setForeground(java.awt.Color.gray);
+        syncedIndicatorLabel.setText("Synced");
+
+        powerOnIndicatorLabel.setFont(new java.awt.Font("Noto Sans", 0, 18)); // NOI18N
+        powerOnIndicatorLabel.setForeground(java.awt.Color.gray);
+        powerOnIndicatorLabel.setText("Power On");
+
+        cameraConnectedIndicatorLight.setFont(new java.awt.Font("Noto Sans", 0, 18)); // NOI18N
+        cameraConnectedIndicatorLight.setForeground(java.awt.Color.gray);
+        cameraConnectedIndicatorLight.setText("Camera Connected");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cameraConnectedIndicatorLight)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(connectedIndicatorLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(syncedIndicatorLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(powerOnIndicatorLabel))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addComponent(powerBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(37, 37, 37)
+                                .addComponent(dutyCycleBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(66, 66, 66)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(pulseSpacingIndicator, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(pulseTimeIndicator, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(569, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(connectedIndicatorLabel)
+                    .addComponent(syncedIndicatorLabel)
+                    .addComponent(powerOnIndicatorLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cameraConnectedIndicatorLight)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(dutyCycleBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(powerBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(pulseTimeIndicator, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(pulseSpacingIndicator, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(305, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("MainConsole", jPanel2);
+
+        jLabel1.setText("Signal Generate Interface");
+
+        sgInterfacePort.setText("/dev/ttyACM0");
+
+        sgInterfaceConnectButton.setText("Connect");
+        sgInterfaceConnectButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sgInterfaceConnectButtonActionPerformed(evt);
+            }
+        });
+
+        sgInterfaceConnectedLight.setBackground(new java.awt.Color(255, 0, 0));
+        sgInterfaceConnectedLight.setText("  ");
+        sgInterfaceConnectedLight.setToolTipText("");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(41, 41, 41)
+                .addComponent(sgInterfaceConnectedLight, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(sgInterfacePort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(sgInterfaceConnectButton)
+                .addContainerGap(522, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(sgInterfacePort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sgInterfaceConnectButton)
+                    .addComponent(sgInterfaceConnectedLight))
+                .addContainerGap(438, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Connectivity", jPanel3);
+
+        cameraFeedPanel.setMaximumSize(new java.awt.Dimension(640, 480));
+        cameraFeedPanel.setMinimumSize(new java.awt.Dimension(640, 480));
+        cameraFeedPanel.setPreferredSize(new java.awt.Dimension(640, 480));
+
+        javax.swing.GroupLayout cameraFeedPanelLayout = new javax.swing.GroupLayout(cameraFeedPanel);
+        cameraFeedPanel.setLayout(cameraFeedPanelLayout);
+        cameraFeedPanelLayout.setHorizontalGroup(
+            cameraFeedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 640, Short.MAX_VALUE)
+        );
+        cameraFeedPanelLayout.setVerticalGroup(
+            cameraFeedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 480, Short.MAX_VALUE)
+        );
+
+        cameraConnectButton.setText("Connect");
+        cameraConnectButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cameraConnectButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("IR Camera");
+
+        cameraConnectedLight.setBackground(new java.awt.Color(255, 0, 0));
+        cameraConnectedLight.setText("  ");
+        cameraConnectedLight.setToolTipText("");
+
+        irStreamButton.setText("Stream");
+        irStreamButton.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                irStreamButtonItemStateChanged(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(cameraFeedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(cameraConnectedLight, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cameraConnectButton))
+                    .addComponent(irStreamButton))
+                .addContainerGap(121, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(49, 49, 49)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(cameraConnectButton)
+                            .addComponent(cameraConnectedLight))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(irStreamButton))
+                    .addComponent(cameraFeedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Camera", jPanel4);
+
+        powerOnButton.setText("Power On");
+        powerOnButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                powerOnButtonActionPerformed(evt);
+            }
+        });
+
+        powerOffButton.setText("Power Off");
+        powerOffButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                powerOffButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
                                 .addComponent(syncButton)
                                 .addGap(4, 4, 4)
                                 .addComponent(syncIndicator, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(11, 11, 11)
-                                .addComponent(powerOnButton)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(powerOnButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(powerOffButton)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -190,30 +441,8 @@ public class HFVController extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(controllerSerialIn))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(12, 12, 12)
-                                .addComponent(powerBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(12, 12, 12)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(37, 37, 37)
-                                .addComponent(dutyCycleBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(66, 66, 66)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                                .addComponent(controllerSerialIn)))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -221,41 +450,31 @@ public class HFVController extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(pulseSpacingSlide, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(pulseDurationSlide, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(pulseSpacingIndicator, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
-                        .addComponent(pulseTimeIndicator, javax.swing.GroupLayout.Alignment.LEADING)))
-                .addContainerGap(28, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 995, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(45, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dutyCycleBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(powerBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(pulseTimeIndicator, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(pulseSpacingIndicator, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
+                        .addGap(35, 35, 35)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(syncButton)
                             .addComponent(syncIndicator))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(powerOnButton))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(powerOnButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(powerOffButton))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -272,7 +491,7 @@ public class HFVController extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(pulseSpacingSlide, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(controllerSerialIn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -283,7 +502,7 @@ public class HFVController extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void syncButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_syncButtonActionPerformed
-        SessionState mainPanelState = getMainPanelState();
+        WaveformState mainPanelState = getMainPanelState();
 
         serial.write("v" + mainPanelState.powerLevel);
         serial.write("d" + mainPanelState.dutyCycle);
@@ -291,12 +510,37 @@ public class HFVController extends javax.swing.JFrame {
         serial.write("s" + mainPanelState.pulseSpacing);
     }//GEN-LAST:event_syncButtonActionPerformed
 
+    private void sgInterfaceConnectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sgInterfaceConnectButtonActionPerformed
+        String port = sgInterfacePort.getText();
+        initializeSerial(port);
+    }//GEN-LAST:event_sgInterfaceConnectButtonActionPerformed
+
     private void powerOnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_powerOnButtonActionPerformed
         serial.write("onn");
     }//GEN-LAST:event_powerOnButtonActionPerformed
 
-    private SessionState getMainPanelState() {
-        return new SessionState(
+    private void powerOffButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_powerOffButtonActionPerformed
+        serial.write("off");
+    }//GEN-LAST:event_powerOffButtonActionPerformed
+
+    private void cameraConnectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cameraConnectButtonActionPerformed
+        boolean success = cameraFeedPanel.connectWebcam();
+        
+        if (success)
+            cameraConnectedLight.setForeground(CONNECTED_COLOR);
+        else
+            cameraConnectedLight.setForeground(SYNC_COLOR);
+    }//GEN-LAST:event_cameraConnectButtonActionPerformed
+
+    private void irStreamButtonItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_irStreamButtonItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED)
+            cameraFeedPanel.setStreaming();
+        else
+            cameraFeedPanel.unsetStreaming();
+    }//GEN-LAST:event_irStreamButtonItemStateChanged
+
+    private WaveformState getMainPanelState() {
+        return new WaveformState(
                 powerSlide.getValue(), dutyCycleSlide.getValue(),
                 pulseDurationSlide.getValue(), pulseSpacingSlide.getValue()
         );
@@ -307,34 +551,88 @@ public class HFVController extends javax.swing.JFrame {
         controllerSerialIn.setText(line);
         
         if (line.length() > 0) {
-            SessionState state = new SessionState(line);
-            SessionState mainPanelState = getMainPanelState();
+            SignalGeneratorState state = new SignalGeneratorState(line);
+            WaveformState mainPanelState = getMainPanelState();
 
-            if (mainPanelState.equals(state))
-                syncIndicator.setBackground(Color.BLUE);
+            if (mainPanelState.equals(state.wave))
+                updateState(MainPanelState.SYNCED);
             else
-                syncIndicator.setBackground(Color.DARK_GRAY);
+                updateState(MainPanelState.CONNECTED);
             
             updateMainPanelReadings(state);
+            emptyPingCounter = 0;
+            
+        } else {
+            if (state == MainPanelState.CONNECTED) {
+                if (++emptyPingCounter >= PINGS_UNTIL_DISCONNECT) {
+                    updateState(MainPanelState.NOT_CONNECTED);
+                    emptyPingCounter = 0;
+                }
+            }
         }
-        else
-            syncIndicator.setBackground(Color.DARK_GRAY);
     }
     
-    private void updateMainPanelReadings(SessionState state) {
-        powerBar.setValue(state.powerLevel);
-        dutyCycleBar.setValue(state.dutyCycle);
+    private void updateMainPanelReadings(SignalGeneratorState sgState) {
+        powerBar.setValue(sgState.wave.powerLevel);
+        dutyCycleBar.setValue(sgState.wave.dutyCycle);
         
-        pulseTimeIndicator.setText("" + state.pulseTime + " ms");
-        pulseSpacingIndicator.setText("" + state.pulseSpacing + " ms");
+        pulseTimeIndicator.setText("" + sgState.wave.pulseTime + " ms");
+        pulseSpacingIndicator.setText("" + sgState.wave.pulseSpacing + " ms");
+        
+        if (sgState.on && state != MainPanelState.POWER_ON)
+            updateState(MainPanelState.POWER_ON);
     }
     
-    public static final int SERIAL_PING_DELAY = 500;    
-    private SerialComm serial;
+    private void updateState(MainPanelState newState) {
+        state = newState;
+        
+        switch (state) {
+            case NOT_CONNECTED:
+                syncIndicator.setBackground(NOT_SYNC_COLOR);
+                sgInterfaceConnectedLight.setBackground(NOT_CONNECTED_COLOR);
+                
+                connectedIndicatorLabel.setForeground(INACTIVE_COLOR);
+                syncedIndicatorLabel.setForeground(INACTIVE_COLOR);
+                powerOnIndicatorLabel.setForeground(INACTIVE_COLOR);
+                
+                break;
+            case CONNECTED:
+                syncIndicator.setBackground(NOT_SYNC_COLOR);
+                sgInterfaceConnectedLight.setBackground(CONNECTED_COLOR);
+                
+                connectedIndicatorLabel.setForeground(CONNECTED_COLOR);
+                syncedIndicatorLabel.setForeground(INACTIVE_COLOR);
+                powerOnIndicatorLabel.setForeground(INACTIVE_COLOR);
+                
+                break;
+            case SYNCED:
+                syncIndicator.setBackground(SYNC_COLOR);
+                sgInterfaceConnectedLight.setBackground(CONNECTED_COLOR);
+                
+                connectedIndicatorLabel.setForeground(CONNECTED_COLOR);
+                syncedIndicatorLabel.setForeground(SYNC_COLOR);
+                powerOnIndicatorLabel.setForeground(INACTIVE_COLOR);
+                
+                break;
+            case POWER_ON:
+                syncIndicator.setBackground(SYNC_COLOR);
+                sgInterfaceConnectedLight.setBackground(CONNECTED_COLOR);
+                
+                connectedIndicatorLabel.setForeground(CONNECTED_COLOR);
+                syncedIndicatorLabel.setForeground(SYNC_COLOR);
+                powerOnIndicatorLabel.setForeground(POWER_ON_COLOR);
+                
+                break;
+                
+            default:
+                ;
+        }
+    }
+    
+    private void updateIfStreaming() {
+        cameraFeedPanel.updateImage();
+    }
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -361,29 +659,43 @@ public class HFVController extends javax.swing.JFrame {
         //</editor-fold>
 
         HFVController main = new HFVController();
-        main.initializeSerial("/dev/ttyACM0");
         
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 main.setVisible(true);
             }
         });
         
-        ActionListener taskPerformer = new ActionListener() {
+        new Timer(SERIAL_PING_DELAY, new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 main.updateSerialOutput();
             }
-        };
+        }).start();
         
-        new Timer(SERIAL_PING_DELAY, taskPerformer).start();
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                main.updateIfStreaming();
+                EventQueue.invokeLater(this);
+            }
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cameraConnectButton;
+    private javax.swing.JLabel cameraConnectedIndicatorLight;
+    private javax.swing.JLabel cameraConnectedLight;
+    private hfvcontroller.CameraFeedPanel cameraFeedPanel;
+    private javax.swing.JLabel connectedIndicatorLabel;
     private javax.swing.JTextField controllerSerialIn;
     private javax.swing.JProgressBar dutyCycleBar;
     private javax.swing.JSlider dutyCycleSlide;
+    private javax.swing.JToggleButton irStreamButton;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -393,6 +705,7 @@ public class HFVController extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JTextPane jTextPane3;
@@ -403,13 +716,19 @@ public class HFVController extends javax.swing.JFrame {
     private javax.swing.JTextPane jTextPane8;
     private javax.swing.JTextPane jTextPane9;
     private javax.swing.JProgressBar powerBar;
-    private javax.swing.JToggleButton powerOnButton;
+    private javax.swing.JButton powerOffButton;
+    private javax.swing.JButton powerOnButton;
+    private javax.swing.JLabel powerOnIndicatorLabel;
     private javax.swing.JSlider powerSlide;
     private javax.swing.JSlider pulseDurationSlide;
     private javax.swing.JTextField pulseSpacingIndicator;
     private javax.swing.JSlider pulseSpacingSlide;
     private javax.swing.JTextField pulseTimeIndicator;
+    private javax.swing.JButton sgInterfaceConnectButton;
+    private javax.swing.JLabel sgInterfaceConnectedLight;
+    private javax.swing.JTextField sgInterfacePort;
     private javax.swing.JButton syncButton;
     private javax.swing.JLabel syncIndicator;
+    private javax.swing.JLabel syncedIndicatorLabel;
     // End of variables declaration//GEN-END:variables
 }
