@@ -20,19 +20,20 @@ import java.awt.image.BufferedImage;
  * @author hskinner
  */
 public class CameraFeedPanel extends javax.swing.JPanel {
-    private BufferedImage image = null;
-    private Rectangle focusBox = null;
-    
-    private Webcam webcam = null;
-    private boolean streaming = false;
-    
     private static final Color RECT_COLOR = Color.RED;
     private static final int FBOX_TICK = 3;
     
     public static final int INITIAL_X = 20;
     public static final int INITIAL_Y = 20;
-    public static final int INITIAL_WIDTH = 100;
-    public static final int INITIAL_HEIGHT = 100;
+    public static final int INITIAL_WIDTH = 600;
+    public static final int INITIAL_HEIGHT = 440;
+    
+    private BufferedImage image = null;
+    private Rectangle focusBox = null;
+    
+    private Webcam webcam = null;
+    private boolean streaming = false;
+    private int fps = 0;
     
     public CameraFeedPanel() {
         super();
@@ -59,11 +60,34 @@ public class CameraFeedPanel extends javax.swing.JPanel {
     public void setStreaming() { streaming = true; }
     public void unsetStreaming() { streaming = false; }
     
-    public void updateImage() {
+    public void updateImage(CameraBoxControlsState cameraControls) {
         if (streaming) {
             image = webcam.getImage();
+            
+            updateCameraBox(cameraControls);
+            
             repaint();
+            fps++;
         }
+    }
+    
+    private void updateCameraBox(CameraBoxControlsState controls) {
+        if (controls.up)
+            decFBoxY();
+        if (controls.down)
+            incFBoxY();
+        if (controls.left)
+            decFBoxX();
+        if (controls.right)
+            incFBoxX();
+        if (controls.widthDown)
+            decFBoxWidth();
+        if (controls.widthUp)
+            incFBoxWidth();
+        if (controls.heightDown)
+            decFBoxHeight();
+        if (controls.heightUp)
+            incFBoxHeight();
     }
     
     protected void paintComponent(Graphics g) {
@@ -93,4 +117,6 @@ public class CameraFeedPanel extends javax.swing.JPanel {
     
     public Rectangle getFocusBox() { return focusBox; }
     public boolean isWebcamConnected() { return webcam != null && webcam.isOpen(); }
+    public int getFPS() { return fps; }
+    public void resetFPSCounter() { fps = 0; }
 }
