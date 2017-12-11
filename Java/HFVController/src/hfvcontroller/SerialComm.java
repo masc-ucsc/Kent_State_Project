@@ -51,8 +51,7 @@ public class SerialComm implements SerialPortEventListener {
 
     try {
       // open serial port, and use class name for the appName.
-      serialPort = (SerialPort) portId.open(this.getClass().getName(),
-          TIME_OUT);
+      serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
 
       // set port parameters
       serialPort.setSerialPortParams(DATA_RATE,

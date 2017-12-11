@@ -58,6 +58,7 @@ public class CameraFeedPanel extends javax.swing.JPanel {
     
     public void setStreaming() { streaming = true; }
     public void unsetStreaming() { streaming = false; }
+    public void setStaticImage(BufferedImage img) { image = img; }
     
     public void updateImage() {
         if (streaming) {

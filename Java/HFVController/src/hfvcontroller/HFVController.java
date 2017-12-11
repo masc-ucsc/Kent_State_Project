@@ -11,6 +11,9 @@ import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ItemEvent;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -35,13 +38,15 @@ public class HFVController extends javax.swing.JFrame {
     public enum MainPanelState { NOT_CONNECTED, CONNECTED, SYNCED, POWER_ON };
     private MainPanelState state = MainPanelState.NOT_CONNECTED;
     
-    public HFVController() {
+    public HFVController() throws IOException {
         initComponents();
         serial = new SerialComm();
         
         syncIndicator.setOpaque(true);
         sgInterfaceConnectedLight.setOpaque(true);
         cameraConnectedLight.setOpaque(true);
+        
+        cameraFeedPanel.setStaticImage(ImageIO.read(new File("test.png")));
     }
     
     public void initializeSerial(String portName) {
@@ -633,7 +638,7 @@ public class HFVController extends javax.swing.JFrame {
         cameraFeedPanel.updateImage();
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws IOException {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
